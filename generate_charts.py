@@ -83,16 +83,16 @@ for bar in bars:
 # 1.4 Top 10 Most Expensive Books
 ax4 = axes[1, 1]
 top_expensive = df.nlargest(10, 'retail_price')[['name', 'retail_price']].copy()
-top_expensive['short_name'] = top_expensive['name'].str[:40] + '...'
+top_expensive['short_name'] = top_expensive['name'].str[:35] + '...'
 bars = ax4.barh(range(len(top_expensive)), top_expensive['retail_price'], color='#e67e22')
 ax4.set_yticks(range(len(top_expensive)))
-ax4.set_yticklabels(top_expensive['short_name'], fontsize=8)
-ax4.set_xlabel('Price (AZN)')
-ax4.set_title('Top 10 Most Expensive Books')
+ax4.set_yticklabels(top_expensive['short_name'], fontsize=9)
+ax4.set_xlabel('Price (AZN)', fontsize=12)
+ax4.set_title('Top 10 Most Expensive Books', fontsize=14, pad=10)
 ax4.invert_yaxis()
 for i, (idx, row) in enumerate(top_expensive.iterrows()):
-    ax4.text(row['retail_price'], i, f' {row["retail_price"]:.0f} AZN',
-            va='center', fontweight='bold')
+    ax4.text(row['retail_price'] + 2, i, f'{row["retail_price"]:.0f}',
+            va='center', fontsize=9)
 
 plt.tight_layout()
 plt.savefig('charts/1_pricing_strategy.png', dpi=300, bbox_inches='tight')
@@ -105,17 +105,17 @@ plt.close()
 fig, axes = plt.subplots(2, 2, figsize=(16, 12))
 fig.suptitle('📚 Category & Market Composition Analysis', fontsize=18, fontweight='bold')
 
-# 2.1 Top 15 Categories
+# 2.1 Top 12 Categories (reduced for readability)
 ax1 = axes[0, 0]
-top_categories = df['category_name'].value_counts().head(15)
+top_categories = df['category_name'].value_counts().head(12)
 bars = ax1.barh(range(len(top_categories)), top_categories.values, color='#3498db')
 ax1.set_yticks(range(len(top_categories)))
-ax1.set_yticklabels(top_categories.index, fontsize=9)
-ax1.set_xlabel('Number of Books')
-ax1.set_title('Top 15 Categories by Volume')
+ax1.set_yticklabels([name[:30] for name in top_categories.index], fontsize=10)
+ax1.set_xlabel('Number of Books', fontsize=12)
+ax1.set_title('Top 12 Categories by Volume', fontsize=14, pad=10)
 ax1.invert_yaxis()
 for i, v in enumerate(top_categories.values):
-    ax1.text(v, i, f' {v} ({v/len(df)*100:.1f}%)', va='center', fontweight='bold')
+    ax1.text(v + 20, i, f'{v}', va='center', fontsize=9)
 
 # 2.2 Category by Average Price
 ax2 = axes[0, 1]
@@ -468,99 +468,92 @@ print("✓ Saved: 6_brand_analysis.png")
 plt.close()
 
 # ===========================
-# 7. COMPREHENSIVE DASHBOARD
+# 7. MARKET OVERVIEW DASHBOARD (SIMPLIFIED)
 # ===========================
-fig = plt.figure(figsize=(20, 12))
-gs = fig.add_gridspec(3, 4, hspace=0.3, wspace=0.3)
-fig.suptitle('📊 Books Market - Comprehensive Dashboard', fontsize=20, fontweight='bold')
+fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+fig.suptitle('📊 Market Overview Dashboard', fontsize=20, fontweight='bold', y=0.995)
 
-# Key Metrics
-ax_metrics = fig.add_subplot(gs[0, :])
-ax_metrics.axis('off')
-metrics_text = f"""
-KEY BUSINESS METRICS
-
-Total Books: {len(df):,} | Total Categories: {df['category_name'].nunique()} | Total Brands: {df['brand'].nunique()} | Total Sellers: {df['seller_name'].nunique()}
-
-Average Price: {df['retail_price'].mean():.2f} AZN | Median Price: {df['retail_price'].median():.2f} AZN | Price Range: {df['retail_price'].min():.2f} - {df['retail_price'].max():.2f} AZN
-
-Books with Discount: {(df['has_discount'].sum()/len(df)*100):.1f}% | Avg Discount: {discount_books['discount_percent'].mean():.1f}%
-
-Installment Available: {(df['installment_enabled'].sum()/len(df)*100):.1f}% | Rated Books: {(len(rated_books)/len(df)*100):.1f}% | Avg Rating: {rated_books['rating_value'].mean():.2f}/5.0
-"""
-ax_metrics.text(0.5, 0.5, metrics_text, ha='center', va='center', fontsize=12,
-               family='monospace', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-
-# Mini charts
-# 1. Top 5 Categories
-ax1 = fig.add_subplot(gs[1, 0])
+# 1. Top Categories
+ax1 = axes[0, 0]
 top_5_cats = df['category_name'].value_counts().head(5)
-ax1.barh(range(len(top_5_cats)), top_5_cats.values, color='#3498db')
+bars = ax1.barh(range(len(top_5_cats)), top_5_cats.values, color='#3498db')
 ax1.set_yticks(range(len(top_5_cats)))
-ax1.set_yticklabels([name[:20] for name in top_5_cats.index], fontsize=8)
-ax1.set_title('Top 5 Categories', fontsize=10, fontweight='bold')
+ax1.set_yticklabels([name[:25] for name in top_5_cats.index], fontsize=10)
+ax1.set_xlabel('Books', fontsize=11)
+ax1.set_title('Top 5 Categories', fontsize=13, fontweight='bold', pad=10)
 ax1.invert_yaxis()
+for i, v in enumerate(top_5_cats.values):
+    ax1.text(v + 20, i, f'{v}', va='center', fontsize=9)
 
-# 2. Top 5 Sellers
-ax2 = fig.add_subplot(gs[1, 1])
+# 2. Top Sellers
+ax2 = axes[0, 1]
 top_5_sellers = df['seller_name'].value_counts().head(5)
-ax2.barh(range(len(top_5_sellers)), top_5_sellers.values, color='#e67e22')
+bars = ax2.barh(range(len(top_5_sellers)), top_5_sellers.values, color='#e67e22')
 ax2.set_yticks(range(len(top_5_sellers)))
-ax2.set_yticklabels([name[:20] for name in top_5_sellers.index], fontsize=8)
-ax2.set_title('Top 5 Sellers', fontsize=10, fontweight='bold')
+ax2.set_yticklabels([name[:20] for name in top_5_sellers.index], fontsize=10)
+ax2.set_xlabel('Books', fontsize=11)
+ax2.set_title('Top 5 Sellers', fontsize=13, fontweight='bold', pad=10)
 ax2.invert_yaxis()
+for i, v in enumerate(top_5_sellers.values):
+    ax2.text(v + 50, i, f'{v}', va='center', fontsize=9)
 
 # 3. Price Distribution
-ax3 = fig.add_subplot(gs[1, 2])
-ax3.hist(df['retail_price'][df['retail_price'] <= 50], bins=30, color='#2ecc71', alpha=0.7)
-ax3.set_xlabel('Price (AZN)', fontsize=8)
-ax3.set_ylabel('Count', fontsize=8)
-ax3.set_title('Price Distribution', fontsize=10, fontweight='bold')
+ax3 = axes[0, 2]
+prices_viz = df['retail_price'][df['retail_price'] <= 50]
+ax3.hist(prices_viz, bins=40, color='#2ecc71', alpha=0.7, edgecolor='black', linewidth=0.5)
+ax3.axvline(prices_viz.median(), color='red', linestyle='--', linewidth=2, label=f'Median: {prices_viz.median():.1f}')
+ax3.set_xlabel('Price (AZN)', fontsize=11)
+ax3.set_ylabel('Count', fontsize=11)
+ax3.set_title('Price Distribution (≤50 AZN)', fontsize=13, fontweight='bold', pad=10)
+ax3.legend(fontsize=10)
+ax3.grid(True, alpha=0.3, axis='y')
 
 # 4. Rating Distribution
-ax4 = fig.add_subplot(gs[1, 3])
+ax4 = axes[1, 0]
 rating_counts = rated_books['rating_value'].value_counts().sort_index()
-ax4.bar(rating_counts.index, rating_counts.values, color='#f39c12')
-ax4.set_xlabel('Rating', fontsize=8)
-ax4.set_ylabel('Count', fontsize=8)
-ax4.set_title('Rating Distribution', fontsize=10, fontweight='bold')
+bars = ax4.bar(rating_counts.index, rating_counts.values, color='#f39c12', edgecolor='black', linewidth=1)
+ax4.set_xlabel('Rating (Stars)', fontsize=11)
+ax4.set_ylabel('Count', fontsize=11)
+ax4.set_title('Customer Ratings', fontsize=13, fontweight='bold', pad=10)
 ax4.set_xticks([1, 2, 3, 4, 5])
+ax4.grid(True, alpha=0.3, axis='y')
+for bar in bars:
+    height = bar.get_height()
+    ax4.text(bar.get_x() + bar.get_width()/2., height,
+            f'{int(height)}',
+            ha='center', va='bottom', fontsize=9)
 
-# 5. Market Segments
-ax5 = fig.add_subplot(gs[2, 0])
-segment_counts.plot(kind='pie', ax=ax5, autopct='%1.0f%%', colors=['#3498db', '#2ecc71', '#f39c12', '#e74c3c', '#9b59b6'])
-ax5.set_ylabel('')
-ax5.set_title('Price Segments', fontsize=10, fontweight='bold')
+# 5. Price Segments
+ax5 = axes[1, 1]
+colors_seg = ['#3498db', '#2ecc71', '#f39c12', '#e74c3c', '#9b59b6']
+wedges, texts, autotexts = ax5.pie(segment_counts.values, labels=segment_counts.index,
+                                     autopct='%1.1f%%', colors=colors_seg, startangle=90)
+for autotext in autotexts:
+    autotext.set_color('white')
+    autotext.set_fontweight('bold')
+    autotext.set_fontsize(10)
+for text in texts:
+    text.set_fontsize(9)
+ax5.set_title('Market Segments', fontsize=13, fontweight='bold', pad=10)
 
-# 6. Installment
-ax6 = fig.add_subplot(gs[2, 1])
-installment_data.plot(kind='pie', ax=ax6, autopct='%1.0f%%', colors=['#27ae60', '#e74c3c'],
-                     labels=['Available', 'Not Available'])
-ax6.set_ylabel('')
-ax6.set_title('Installment Options', fontsize=10, fontweight='bold')
+# 6. Installment vs No Installment
+ax6 = axes[1, 2]
+inst_counts = df['installment_enabled'].value_counts()
+colors_inst = ['#27ae60', '#e74c3c']
+labels_inst = [f'Installment\n({inst_counts[True]} books)', f'Cash Only\n({inst_counts[False]} books)']
+wedges, texts, autotexts = ax6.pie(inst_counts.values, labels=labels_inst,
+                                     autopct='%1.1f%%', colors=colors_inst, startangle=90)
+for autotext in autotexts:
+    autotext.set_color('white')
+    autotext.set_fontweight('bold')
+    autotext.set_fontsize(11)
+for text in texts:
+    text.set_fontsize(10)
+ax6.set_title('Payment Options', fontsize=13, fontweight='bold', pad=10)
 
-# 7. Top Brands
-ax7 = fig.add_subplot(gs[2, 2])
-top_5_brands = df['brand'].value_counts().head(5)
-ax7.barh(range(len(top_5_brands)), top_5_brands.values, color='#16a085')
-ax7.set_yticks(range(len(top_5_brands)))
-ax7.set_yticklabels([name[:15] for name in top_5_brands.index], fontsize=8)
-ax7.set_title('Top 5 Brands', fontsize=10, fontweight='bold')
-ax7.invert_yaxis()
-
-# 8. Seller Performance
-ax8 = fig.add_subplot(gs[2, 3])
-seller_perf_top = seller_perf.nlargest(20, 'book_count')
-ax8.scatter(seller_perf_top['book_count'], seller_perf_top['seller_rating'],
-           s=seller_perf_top['book_count'], alpha=0.6, c=seller_perf_top['seller_rating'],
-           cmap='RdYlGn')
-ax8.set_xlabel('Catalog Size', fontsize=8)
-ax8.set_ylabel('Rating %', fontsize=8)
-ax8.set_title('Seller Performance', fontsize=10, fontweight='bold')
-ax8.grid(True, alpha=0.3)
-
-plt.savefig('charts/7_comprehensive_dashboard.png', dpi=300, bbox_inches='tight')
-print("✓ Saved: 7_comprehensive_dashboard.png")
+plt.tight_layout()
+plt.savefig('charts/7_market_overview.png', dpi=300, bbox_inches='tight')
+print("✓ Saved: 7_market_overview.png")
 plt.close()
 
 print("\n" + "="*60)

@@ -426,21 +426,19 @@ This report presents a comprehensive business intelligence analysis of the onlin
 
 ---
 
-## 📊 7. Comprehensive Market Dashboard
+## 📊 7. Market Overview Dashboard
 
-![Comprehensive Dashboard](charts/7_comprehensive_dashboard.png)
+![Market Overview Dashboard](charts/7_market_overview.png)
 
 ### At-a-Glance Business Metrics
 
-This dashboard provides a holistic view of the entire marketplace, combining:
-- **Category Distribution**: Top performers and market share
-- **Seller Landscape**: Market concentration and competitive dynamics
-- **Pricing Strategy**: Optimal price points and segments
-- **Customer Satisfaction**: Rating patterns and engagement
-- **Market Segments**: Price-based customer targeting
-- **Payment Options**: Installment flexibility
-- **Brand Presence**: Top brands and their positioning
-- **Seller Performance**: Rating vs volume correlation
+This simplified dashboard provides a clear visual overview of key market metrics:
+- **Top Categories**: Leading product categories by volume
+- **Top Sellers**: Market leaders and their catalog sizes
+- **Price Distribution**: How books are priced across the market
+- **Customer Ratings**: Rating distribution and satisfaction levels
+- **Market Segments**: Customer targeting by price points
+- **Payment Options**: Installment availability and adoption
 
 ---
 
