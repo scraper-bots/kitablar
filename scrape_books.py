@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import csv
 import logging
+import math
 from typing import List, Dict
 from datetime import datetime
 import json
@@ -186,6 +187,14 @@ class BookScraper:
 
     async def run(self):
         """Main execution method"""
+        # Get actual total from API
+        total_count = await self.get_total_count()
+        if total_count > 0:
+            # Calculate actual pages needed
+            actual_pages = math.ceil(total_count / self.per_page)
+            logger.info(f"Calculated pages needed: {actual_pages} (for {total_count} products)")
+            self.total_pages = actual_pages
+
         logger.info(f"Starting scraping of {self.total_pages} pages...")
         start_time = datetime.now()
 
@@ -196,6 +205,7 @@ class BookScraper:
 
         logger.info(f"Scraping completed in {duration:.2f} seconds")
         logger.info(f"Total products collected: {len(self.all_products)}")
+        logger.info(f"Expected from API: {total_count}")
         logger.info(f"Failed pages: {len(self.failed_pages)}")
 
         self.save_to_csv()
@@ -204,10 +214,12 @@ class BookScraper:
         print("\n" + "="*50)
         print("SCRAPING SUMMARY")
         print("="*50)
+        print(f"Expected products: {total_count}")
         print(f"Total pages: {self.total_pages}")
         print(f"Successfully scraped: {self.total_pages - len(self.failed_pages)}")
         print(f"Failed pages: {len(self.failed_pages)}")
         print(f"Total products: {len(self.all_products)}")
+        print(f"Completeness: {(len(self.all_products)/total_count*100) if total_count > 0 else 0:.2f}%")
         print(f"Duration: {duration:.2f} seconds")
         print("="*50)
 
